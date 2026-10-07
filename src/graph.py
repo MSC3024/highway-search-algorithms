@@ -21,6 +21,7 @@ class HighwayGraph:
     def __init__(self) -> None:
         self.cities: dict[str, City] = {}
         self.adjacency: dict[str, list[tuple[str, float]]] = {}
+        self.plane_distances: dict[tuple[str, str], float] = {}
 
     @classmethod
     def from_csv(cls, cities_path: Path, roads_path: Path) -> "HighwayGraph":
@@ -38,10 +39,13 @@ class HighwayGraph:
         with roads_path.open(newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file)
             for row in reader:
+                plane_raw = row.get("plane_miles", "")
+                plane_miles = float(plane_raw) if plane_raw not in ("", None) else None
                 graph.add_road(
                     row["city_a"],
                     row["city_b"],
                     float(row["driving_miles"]),
+                    plane_miles,
                 )
 
         return graph
@@ -50,14 +54,23 @@ class HighwayGraph:
         self.cities[name] = City(name, latitude, longitude)
         self.adjacency.setdefault(name, [])
 
-    def add_road(self, city_a: str, city_b: str, driving_miles: float) -> None:
+    def add_road(
+        self,
+        city_a: str,
+        city_b: str,
+        driving_miles: float,
+        plane_miles: float | None = None,
+    ) -> None:
         self.validate_city(city_a)
         self.validate_city(city_b)
 
         self.adjacency[city_a].append((city_b, driving_miles))
         self.adjacency[city_b].append((city_a, driving_miles))
 
-        # Sorting makes BFS/DFS behavior deterministic.
+        if plane_miles is not None:
+            self.plane_distances[(city_a, city_b)] = plane_miles
+            self.plane_distances[(city_b, city_a)] = plane_miles
+
         self.adjacency[city_a].sort(key=lambda item: item[0])
         self.adjacency[city_b].sort(key=lambda item: item[0])
 
@@ -79,6 +92,12 @@ class HighwayGraph:
                 return distance
         raise ValueError(f"No direct road between {city_a} and {city_b}")
 
+    def collected_plane_distance(self, city_a: str, city_b: str) -> float | None:
+        """Return the team's collected Google Maps straight-line value for a direct pair."""
+        self.validate_city(city_a)
+        self.validate_city(city_b)
+        return self.plane_distances.get((city_a, city_b))
+
     def path_distance(self, path: list[str]) -> float:
         if len(path) < 2:
             return 0.0
@@ -88,9 +107,21 @@ class HighwayGraph:
         )
 
     def heuristic_miles(self, city_a: str, city_b: str) -> float:
-        """Great-circle distance using the Haversine formula."""
+        """
+        Straight-line estimate h(n).
+
+        If the team collected this exact city pair in Google Maps, use that
+        measured value. Otherwise compute the direct great-circle distance
+        from the city coordinates with the Haversine formula. This lets A*
+        evaluate any current-city/goal pair while preserving collected values
+        whenever they are available.
+        """
         self.validate_city(city_a)
         self.validate_city(city_b)
+
+        collected = self.collected_plane_distance(city_a, city_b)
+        if collected is not None:
+            return collected
 
         a = self.cities[city_a]
         b = self.cities[city_b]

@@ -1,58 +1,50 @@
 # Highway Search Algorithms
 
-A graph-search project that compares **Breadth-First Search (BFS)**, **Depth-First Search (DFS)**, **Uniform-Cost Search (UCS)**, and **A\*** on a U.S. highway-routing graph.
+A Python graph-search project that compares **Breadth-First Search (BFS)**, **Depth-First Search (DFS)**, **Uniform-Cost Search (UCS)**, and **A\*** on a U.S. highway-routing network built from the team's collected Google Maps data.
 
 ## Project Motivation
 
-This project demonstrates how classic search algorithms behave on a practical route-finding problem.
-
-The project models cities as graph nodes and road connections as weighted edges:
+The project applies four classic AI search algorithms to a practical route-finding problem. Cities are graph nodes and the collected city-to-city highway connections are weighted graph edges.
 
 - **g(n):** accumulated driving distance in miles.
-- **h(n):** straight-line (great-circle) distance from the current city to the destination.
-- **Estimated airplane time:** `h(n) / 250 mph`, included because the assignment assumes an airplane speed of 250 miles per hour.
+- **h(n):** straight-line distance estimate to the target in miles.
+- **A\* evaluation:** `f(n) = g(n) + h(n)`.
+- **Airplane-time estimate:** `h(n) / 250 mph`, following the assignment assumption.
 
-> **Important:** A\* uses straight-line **miles** as the heuristic because `g(n)` is also measured in miles. Keeping both values in the same unit makes the A\* cost calculation `f(n) = g(n) + h(n)` mathematically consistent.
+## Dataset
+
+The final dataset contains **11 cities and 17 highway connections** collected by the team using Google Maps.
+
+Cities:
+
+1. Saint Paul, Minnesota
+2. Springfield, Illinois
+3. Chicago, Illinois
+4. Indianapolis, Indiana
+5. Columbus, Ohio
+6. Nashville, Tennessee
+7. Atlanta, Georgia
+8. Columbia, South Carolina
+9. Washington, District of Columbia
+10. Philadelphia, Pennsylvania
+11. New York, New York
+
+The authoritative collected data is stored in:
+
+- `data/google_maps_collected.csv` - original normalized team data with road and plane distances.
+- `data/roads.csv` - program-ready weighted-edge dataset.
+- `data/cities.csv` - coordinates and state metadata used for mapping and heuristic fallback.
+
+For a city pair that appears directly in the collected data, the program uses the team's collected straight-line value for `h(n)`. For other current-city/goal combinations needed by A\*, the program computes a direct great-circle estimate using the Haversine formula.
 
 ## Algorithms
 
-| Algorithm | Uses edge weights? | Uses heuristic? | Main idea |
+| Algorithm | Edge weights | Heuristic | Search strategy |
 |---|---:|---:|---|
 | BFS | No | No | Explores level by level |
-| DFS | No | No | Goes deep before backtracking |
-| UCS | Yes | No | Expands the lowest accumulated-cost path |
-| A* | Yes | Yes | Expands the lowest `g(n) + h(n)` path |
-
-## Cities
-
-The included starter graph contains 12 cities in 12 states:
-
-1. Chicago, Illinois
-2. Indianapolis, Indiana
-3. Columbus, Ohio
-4. Detroit, Michigan
-5. Milwaukee, Wisconsin
-6. St. Louis, Missouri
-7. Louisville, Kentucky
-8. Nashville, Tennessee
-9. Atlanta, Georgia
-10. Charlotte, North Carolina
-11. Pittsburgh, Pennsylvania
-12. New York, New York
-
-## Data
-
-`data/cities.csv` contains city coordinates.
-
-`data/roads.csv` contains starter driving-distance values so the program works immediately.
-
-`data/google_maps_collection_template.csv` is the file your team should fill in with the exact Google Maps values required by the assignment.
-
-### Before final submission
-
-The driving-distance values in this repository are **starter/demo values** and should be checked against Google Maps by your team before submitting the course project. Replace the corresponding values in `data/roads.csv` with the verified Google Maps distances.
-
-The heuristic is calculated automatically from latitude/longitude using the Haversine formula.
+| DFS | No | No | Explores one branch deeply before backtracking |
+| UCS | Yes | No | Expands the path with the smallest accumulated driving distance |
+| A* | Yes | Yes | Expands the path with the smallest `g(n) + h(n)` |
 
 ## Project Structure
 
@@ -65,7 +57,8 @@ highway-search-algorithms/
 ├── data/
 │   ├── cities.csv
 │   ├── roads.csv
-│   └── google_maps_collection_template.csv
+│   ├── google_maps_collected.csv
+│   └── DATA_NOTES.md
 ├── src/
 │   ├── __init__.py
 │   ├── graph.py
@@ -75,52 +68,40 @@ highway-search-algorithms/
 │   └── test_search.py
 ├── docs/
 │   ├── REPORT_OUTLINE.md
-│   └── PRESENTATION_OUTLINE.md
+│   ├── PRESENTATION_OUTLINE.md
+│   └── FINAL_RESULTS.md
 └── outputs/
     └── .gitkeep
 ```
 
 ## Setup
 
-### 1. Clone the repository
-
 ```bash
-git clone https://github.com/YOUR-USERNAME/highway-search-algorithms.git
+git clone https://github.com/Amereh11/highway-search-algorithms.git
 cd highway-search-algorithms
-```
-
-### 2. Create a virtual environment
-
-macOS/Linux:
-
-```bash
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-Windows:
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-### 3. Install dependencies
-
-```bash
 pip install -r requirements.txt
+```
+
+On Windows, activate the environment with:
+
+```bash
+.venv\Scripts\activate
 ```
 
 ## Run One Route
 
+Example: Saint Paul to New York using all four algorithms.
+
 ```bash
-python main.py --start "Chicago, IL" --goal "New York, NY" --algorithm all
+python main.py --start "Saint Paul" --goal "New York" --algorithm all
 ```
 
-To save route maps:
+Save route-map images as well:
 
 ```bash
-python main.py --start "Chicago, IL" --goal "New York, NY" --algorithm all --save-maps
+python main.py --start "Saint Paul" --goal "New York" --algorithm all --save-maps
 ```
 
 ## Run Five Random Start/Target Pairs
@@ -135,28 +116,34 @@ With route maps:
 python main.py --random 5 --seed 42 --save-maps
 ```
 
-## Example Output
+## Verified Example: Saint Paul to New York
 
-```text
-BFS
-Path: Chicago, IL -> Detroit, MI -> Pittsburgh, PA -> New York, NY
-Driving distance: ...
-Nodes expanded: ...
+Using the team's final Google Maps road-distance dataset:
 
-UCS
-Path: ...
-Driving distance: ...
-Nodes expanded: ...
+| Algorithm | Route distance | Nodes expanded |
+|---|---:|---:|
+| BFS | 1,287 mi | 11 |
+| DFS | 1,287 mi | 5 |
+| UCS | 1,287 mi | 10 |
+| A* | 1,287 mi | 6 |
 
-A*
-Path: ...
-Driving distance: ...
-Nodes expanded: ...
-Straight-line heuristic from start: ... miles
-Estimated direct-flight time at 250 mph: ... hours
-```
+All four algorithms found the same route for this case:
 
-Exact output depends on the road-distance values stored in `data/roads.csv`.
+`Saint Paul -> Chicago -> Columbus -> Philadelphia -> New York`
+
+The direct straight-line estimate from Saint Paul to New York is approximately **1,007.6 miles**, which corresponds to about **4.03 hours** at 250 mph.
+
+## Five Seeded Random Tests
+
+With `--random 5 --seed 42`, the program evaluates these start/goal pairs:
+
+1. Washington -> Chicago
+2. Atlanta -> Indianapolis
+3. Columbus -> Washington
+4. Columbia -> Chicago
+5. Washington -> Saint Paul
+
+Across these tests, UCS and A* return the same minimum-cost route distances, while A* generally expands fewer nodes because the heuristic guides the search toward the target.
 
 ## Run Tests
 
@@ -164,36 +151,33 @@ Exact output depends on the road-distance values stored in `data/roads.csv`.
 python -m unittest discover -s tests -v
 ```
 
+The test suite checks:
+
+- all four algorithms can find a route,
+- the final dataset contains 11 cities and 17 edges,
+- UCS and A* agree on the optimal route cost for the main test,
+- collected straight-line data is used for direct pairs,
+- `h(goal) = 0`, and
+- the 250 mph flight-time calculation is correct.
+
 ## Assignment Coverage
 
-This repository supports the project requirements by providing:
+This repository implements the programming requirements of the project:
 
-- 10–15 cities
-- Multiple U.S. states
-- Driving-distance edge costs
-- Straight-line heuristic estimates
+- 10-15 cities: **11 included**
+- highway connections across multiple states/regions
+- Google Maps driving distances for `g(n)`
+- straight-line estimates for `h(n)`
 - BFS
 - DFS
 - UCS
 - A*
-- User-selected start and target cities
-- Five random start/target test cases
-- Route visualization
-- Distance reporting
-- Report outline
-- Presentation outline
+- user-selected start and target cities
+- five random start/target cases
+- route and distance output
+- map visualization
+- automated tests
 
-## Team Workflow
+## Team
 
-A simple team workflow is:
-
-1. One member verifies city coordinates.
-2. One or more members collect Google Maps driving distances.
-3. One member reviews/testing the algorithms.
-4. One member prepares visuals/results.
-5. The team combines findings into the report and presentation.
-6. Every contributor participates in the recorded presentation.
-
-## Academic Note
-
-Use the code as your project foundation, but make sure every team member understands how BFS, DFS, UCS, A\*, `g(n)`, and `h(n)` work because the professor may ask contributors to demonstrate their skills individually.
+The project was completed collaboratively by **Motasem Amereh, Tammanna, Manjot, Thomas, and Parv**. Responsibilities were divided across data preparation, algorithm implementation, integration, testing, visualization, analysis, and documentation, with all contributions presented as equal parts of the final project.

@@ -1,57 +1,38 @@
 # Presentation Outline
 
-Suggested length: adjust to your professor's required time.
+Target: approximately 15 minutes total, about 3 minutes per contributor.
 
-## Slide 1 — Title
-- Highway Search Algorithms
-- BFS, DFS, UCS, and A*
-- Team members
+All five roles are presented as equal contributions.
 
-## Slide 2 — Motivation
-- Why route finding is a graph-search problem
-- What the project compares
-
-## Slide 3 — Highway Graph
-- 10–15 cities
-- Nodes, edges, driving-distance weights
-
-## Slide 4 — Data Collection
-- Google Maps driving distance
-- Latitude/longitude
-- Straight-line heuristic
-- Airplane-speed assumption: 250 mph
-
-## Slide 5 — BFS and DFS
-- Core idea
-- Queue versus stack
-- Strengths/limitations
-
-## Slide 6 — UCS
-- Priority queue
-- `g(n)` accumulated driving distance
-- Optimality with nonnegative edge weights
-
-## Slide 7 — A*
+## Motasem Amereh - A* and System Integration
 - `f(n) = g(n) + h(n)`
-- Straight-line heuristic
-- Why units must be consistent
+- collected and fallback heuristic handling
+- priority queue and best-g updates
+- shared SearchResult integration
+- A* efficiency results
 
-## Slide 8 — Program Demo
-- User-selected start/goal
-- Route
-- Distance
-- Expansion order
-- Map
+## Tammanna - Google Maps Data and Heuristic Preparation
+- 11 cities and 17 connections
+- road distance `g(n)`
+- straight-line distance `h(n)`
+- normalized CSV files
+- coordinate/state metadata
 
-## Slide 9 — Five Random Tests
-- Comparison table
-- Which algorithm expanded fewer nodes
-- Which produced the shortest route
+## Manjot - BFS and DFS
+- queue versus stack
+- traversal order and parent reconstruction
+- deterministic neighbor ordering
+- examples where DFS returns longer routes
 
-## Slide 10 — Conclusion
-- Main lessons
-- Team contributions
-- Questions
+## Thomas - UCS and Testing
+- accumulated driving cost
+- priority queue and best-cost updates
+- optimal-cost baseline
+- six automated tests
 
-## Recording Reminder
-The assignment says the recorded presentation must include all contributors, so divide speaking roles before recording.
+## Parv - Visualization and Experimental Results
+- network/route plotting
+- Saint Paul -> New York demonstration
+- five seeded random tests
+- average route distance and node expansions
+- overall conclusions

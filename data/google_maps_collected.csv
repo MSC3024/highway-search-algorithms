@@ -1,0 +1,18 @@
+city_a,city_b,driving_miles,plane_miles
+Saint Paul,Chicago,398,346.44
+Saint Paul,Springfield,515,397.21
+Springfield,Chicago,201,179.51
+Springfield,Nashville,374,296.54
+Springfield,Indianapolis,211,186.0
+Chicago,Indianapolis,183,165.34
+Chicago,Columbus,325,291.66
+Indianapolis,Nashville,288,251.5
+Indianapolis,Columbus,174,169.24
+Nashville,Columbia,462,357.54
+Nashville,Atlanta,248,214.81
+Columbus,Philadelphia,469,414.98
+Columbus,Washington,398,326.6
+Atlanta,Columbia,214,193.14
+Columbia,Washington,478,405.32
+Washington,Philadelphia,136,123.41
+Philadelphia,New York,95,80.62

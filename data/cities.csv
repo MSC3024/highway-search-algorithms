@@ -1,13 +1,12 @@
-city,latitude,longitude,state
-"Chicago, IL",41.8781,-87.6298,Illinois
-"Indianapolis, IN",39.7684,-86.1581,Indiana
-"Columbus, OH",39.9612,-82.9988,Ohio
-"Detroit, MI",42.3314,-83.0458,Michigan
-"Milwaukee, WI",43.0389,-87.9065,Wisconsin
-"St. Louis, MO",38.627,-90.1994,Missouri
-"Louisville, KY",38.2527,-85.7585,Kentucky
-"Nashville, TN",36.1627,-86.7816,Tennessee
-"Atlanta, GA",33.749,-84.388,Georgia
-"Charlotte, NC",35.2271,-80.8431,North Carolina
-"Pittsburgh, PA",40.4406,-79.9959,Pennsylvania
-"New York, NY",40.7128,-74.006,New York
+city,latitude,longitude,state,state_abbreviation
+Saint Paul,44.9537,-93.09,Minnesota,MN
+Springfield,39.7817,-89.6501,Illinois,IL
+Chicago,41.8781,-87.6298,Illinois,IL
+Indianapolis,39.7684,-86.1581,Indiana,IN
+Columbus,39.9612,-82.9988,Ohio,OH
+Nashville,36.1627,-86.7816,Tennessee,TN
+Atlanta,33.749,-84.388,Georgia,GA
+Columbia,34.0007,-81.0348,South Carolina,SC
+Washington,38.9072,-77.0369,District of Columbia,DC
+Philadelphia,39.9526,-75.1652,Pennsylvania,PA
+New York,40.7128,-74.006,New York,NY
